@@ -68,4 +68,42 @@ class Room extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Reservation::className(), ['room_id' => 'id']);
     }
+
+    public function getCustomers() {
+        return $this->hasMany(Customer::className(), ['id' => 'customer_id'])->via('reservations');
+    }
+
+    public function getLastReservation() {
+        return $this->hasOne(Reservation::className(), ['room_id' => 'id'])->orderBy('id');
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

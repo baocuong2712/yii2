@@ -17,81 +17,66 @@ class AuthorizationManagerController extends Controller {
     public function initializeAuthorizations()
     {
         $auth = Yii::$app->authManager;
-        $permissions = [
-            'createReservation' => array('desc' => 'Create a reservation'),
-            'updateReservation' => array('desc' => 'Update reservation'),
-            'deleteReservation' => array('desc' => 'Delete reservation'),
-            'createRoom' => array('desc' => 'Create a room'),
-            'updateRoom' => array('desc' => 'Update room'),
-            'deleteRoom' => array('desc' => 'Delete room'),
-            'createCustomer' => array('desc' => 'Create a customer'),
-            'updateCustomer' => array('desc' => 'Update customer'),
-            'deleteCustomer' => array('desc' => 'Delete customer'),
-        ];
-        $roles = [
-            'operator' => array('createReservation', 'createRoom', 'createCustomer'),
-        ];
+//        $permissions = [
+//            'permissionCreateReservation' => array('desc' => 'Create a reservation'),
+//            'updateReservation' => array('desc' => 'Update customer')
+//        ];
 
-        // Add all permissions
-        foreach($permissions as $keyP=>$valueP)
-        {
-            $p = $auth->createPermission($keyP);
-            $p->description = $valueP['desc'];
-            $auth->add($p);
+        // add "createReservation" permission
+        $permissionCreateReservation = $auth->createPermission('createReservation');
+        $permissionCreateReservation->description = 'Create a reservation';
+        $auth->add($permissionCreateReservation);
+
+        // add "updateReservation" permission
+        $permissionUpdateReservation = $auth->createPermission('updateReservation');
+        $permissionUpdateReservation->description = 'Update reservation';
+        $auth->add($permissionUpdateReservation);
 
         // Add "operator" role and give this role the "createReservation" permission
-            $r = $auth->createRole('role_'.$keyP);
-            $r->description = $valueP['desc'];
-            $auth->add($r);
-            if( false == $auth->hasChild($r, $p)) $auth->addChild($r, $p);
-        }
-
-        // Add all roles
-        foreach($roles as $keyR=>$valueR)
-        {
-            $r = $auth->createRole($keyR);
-            $r->description = $keyR;
-            $auth->add($r);
-            foreach($valueR as $permissionName)
-            {
-                if( false == $auth->hasChild($r, $auth->getPermission($permissionName)))
-                    $auth->addChild($r, $auth->getPermission($permissionName));
-            }
-        }
+        $roleOperator = $auth->createRole('operator');
+        $auth->add($roleOperator);
+        $auth->addChild($roleOperator, $permissionCreateReservation);
 
         // Add all permissions to admin role
-        $r = $auth->createRole('admin');
-        $r->description = 'admin';
-        $auth->add($r);
-        foreach($permissions as $keyP=>$valueP)
-        {
-            if( false == $auth->hasChild($r, $auth->getPermission($permissionName)))
-                $auth->addChild($r, $auth->getPermission($keyP));
-        }
+        $roleAdmin = $auth->createRole('admin');
+        $auth->add($roleAdmin);
+        $auth->addChild($roleAdmin, $permissionUpdateReservation);
+        $auth->addChild($roleAdmin, $roleOperator);
+
+        // Assign roles to users. 1 and 2 are IDs returned by IdentityInterface::getId() usually implemented in your User model.
+        $auth->assign($roleOperator, 2);
+        $auth->assign($roleAdmin, 1);
     }
 
     public function actionIndex()
     {
         $auth = Yii::$app->authManager;
+
         // Initialize authorizations
         $this->initializeAuthorizations();
+
         // Get all users
         $users = User::find()->all();
+
         // Initialize data
-        $rolesAvailable = $auth->getRoles();
+        $rolesAvailable = $auth->getRoles(); // operator, admin
         $rolesNamesByUser = [];
+
         // For each user, fill $rolesNames with name of roles assigned to user
         foreach($users as $user)
         {
+            // Bien nay de luu ten cua tat ca cac role, sau do gan cho...
             $rolesNames = [];
+
+            // Day moi chi la cac doi tuong duoc tra ve, de lay thong tin them, ta can truy suat nua.
             $roles = $auth->getRolesByUser($user->id);
-            foreach($roles as $r)
+            foreach($roles as $role)
             {
-                $rolesNames[] = $r->name;
-//                echo 'There are ' . $rolesNames;
+                $rolesNames[] = $role->name;
             }
             $rolesNamesByUser[$user->id] = $rolesNames;
         }
+
         return $this->render('index', [
             'users' => $users,
             'rolesAvailable' => $rolesAvailable,
