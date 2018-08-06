@@ -59,7 +59,7 @@ class Customer extends \yii\db\ActiveRecord
     }
 
     public function getNameAndSurname() {
-        return $this->name . ' ' . $this->surname;
+        return $this->name.' '.$this->surname;
     }
 }
 

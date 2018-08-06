@@ -1,9 +1,9 @@
 <?php
 return [
-    2 => [
+    1 => [
         'operator',
     ],
-    1 => [
+    2 => [
         'admin',
     ],
 ];

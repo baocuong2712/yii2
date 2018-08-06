@@ -3,7 +3,8 @@ use yii\grid\GridView;
 ?>
 
 <h2>Reservations</h2>
-
+<br>
+<br>
 <?php
 $sumOfPricesPerDay = 0;
 $averagePricePerDay = 0;
@@ -29,26 +30,12 @@ $roomsFilterData = \yii\helpers\ArrayHelper::map(\app\models\Room::find()->all()
         'showFooter' => true,
         'columns' => [
             'id',
-//            [
-//                'header' => 'Room',
-//                'filter' => \yii\helpers\Html::activeDropDownList($searchModel, 'room_id',
-//                    $roomsFilterData, ['prompt' => '--- all']),
-//                'content' => function($model) {
-//                    return $model->room->floor;
-//                }
-//            ],
             'room_id',
-//            'customer_id',
-//            'customer.surname',
-            [
-                'header' => 'Customer',
-//                'attribute' => 'customer.surname',
-                'attribute' => 'customer.nameAndSurname'
-            ],
+            'attribute' => 'customer.surname',
 //            'price_per_day',
             [
                 'attribute' => 'price_per_day',
-                'footer' => Yii::$app->formatter->asCurrency($sumOfPricesPerDay, 'USD')
+                'footer' => 'Count: ' . Yii::$app->formatter->asCurrency($sumOfPricesPerDay, 'USD')
             ],
             'date_from',
             'date_to',

@@ -11,13 +11,14 @@ use app\models\Reservation;
 
 class ReservationSearch extends Reservation
 {
-    public function attributes() {
-        //
+    public function attributes()
+    {// add related fields to searchable attributes
         return array_merge(parent::attributes(), ['customer.surname']);
     }
-
-    public function rules() {
-        return array_merge(parent::rules(), [['customer.surname', 'safe']]);
+    public function rules()
+    {
+    // add related rules to searchable attributes
+        return array_merge(parent::rules(),[ ['customer.surname', 'safe'] ]);
     }
 }
 ?>

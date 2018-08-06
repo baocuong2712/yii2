@@ -1,23 +1,23 @@
 <?php
 return [
-    'createReservation' => [
+    'createRoom' => [
         'type' => 2,
-        'description' => 'Create a reservation',
+        'description' => 'Create a room',
     ],
-    'updateReservation' => [
+    'updateRoom' => [
         'type' => 2,
-        'description' => 'Update reservation',
+        'description' => 'Update room',
     ],
     'operator' => [
         'type' => 1,
         'children' => [
-            'createReservation',
+            'createRoom',
         ],
     ],
     'admin' => [
         'type' => 1,
         'children' => [
-            'updateReservation',
+            'updateRoom',
             'operator',
         ],
     ],

@@ -15,7 +15,7 @@ $sf = $searchFilter;
     <div class="row">
         <?php $operator = $sf['floor']['operator']; ?>
         <?php $value = $sf['floor']['value'] ?>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="">Floor</label>
             <select name="SearchFilter[floor][operator]">
                 <?php foreach ($operators as $op) { ?>
@@ -33,7 +33,7 @@ $sf = $searchFilter;
 
         <?php $operator = $sf['room_number']['operator'] ?>
         <?php $value = $sf['room_number']['value']; ?>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="">Room number</label>
             <select name="SearchFilter[room_number][operator]" id="">
                 <?php foreach ($operators as $op) { ?>
@@ -54,7 +54,7 @@ $sf = $searchFilter;
             $operator = $sf['price_per_day']['operator'];
             $value = $sf['price_per_day']['value'];
         ?>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="">Price per day</label>
             <select name="SearchFilter[price_per_day][operator]" id="">
                 <?php foreach ($operators as $op) {?>
@@ -75,7 +75,6 @@ $sf = $searchFilter;
     <div class="row">
         <div class="col-md-3">
             <input type="submit" value="Filter" class="btn btn-primary">
-            <input type="reset" value="Reset" class="btn btn-primary">
         </div>
     </div>
 </form>

@@ -8,6 +8,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -16,6 +17,31 @@ use app\models\Customer;
 use app\models\Reservation;
 
 class RoomsController extends Controller {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['operator'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['update'], // admin
+                        'roles' => ['admin'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionCreate() {
         $model = new Room();
 //        $modelCanSave = false;

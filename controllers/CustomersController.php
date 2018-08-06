@@ -16,15 +16,19 @@ use yii\web\Controller;
 class CustomersController extends Controller
 {
     public function actionGrid() {
-        $query = Customer::find();
+//        $query = Customer::find();
+//
+//        $dataProvider = new ActiveDataProvider([
+//            'query' => $query,
+//            'pagination' => [
+//                'pageSize' => 10
+//            ]
+//        ]);
+//
+//        return $this->render('grid', ['dataProvider' => $dataProvider]);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 10
-            ]
-        ]);
+        $model = Customer::findOne(\Yii::$app->user->id);
 
-        return $this->render('grid', ['dataProvider' => $dataProvider]);
+        return $this->render('grid', ['model' => $model]);
     }
 }

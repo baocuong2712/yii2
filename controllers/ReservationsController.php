@@ -17,17 +17,15 @@ use app\models\Reservation;
 class ReservationsController extends Controller
 {
     public function actionGrid() {
-        $query = Reservation::find();
-        $searchModel = new ReservationSearch();
-
-        if (isset($_GET['ReservationSearch'])) {
-            // Fill $searchModel out with the content of $_GET['Reservation'] using load().
-            $searchModel->load(\Yii::$app->request->get());
-
+        $query = \app\models\Reservation::find();
+        $searchModel = new \app\models\ReservationSearch();
+        if(isset($_GET['ReservationSearch']))
+        {
+            $searchModel->load( \Yii::$app->request->get() );
             $query->joinWith(['customer']);
-            $query->andFilterWhere(['customer.surname' => $searchModel->getAttribute('customer.surname')]);
-
-            // Adds an additional WHERE condition [AND FILTER WHERE] to the existing one.
+            $query->andFilterWhere(
+                ['LIKE', 'customer.surname', $searchModel->getAttribute('customer.surname')]
+            );
             $query->andFilterWhere([
                 'id' => $searchModel->id,
                 'customer_id' => $searchModel->customer_id,
@@ -35,14 +33,17 @@ class ReservationsController extends Controller
                 'price_per_day' => $searchModel->price_per_day,
             ]);
         }
-        $dataProvider = new ActiveDataProvider([
+
+        $query->where(["=", 'customer_id', $_GET['Reservation']['customer_id']]);
+
+        $dataProvider = new \yii\data\ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 10
-            ]
+                'pageSize' => 10,
+            ],
         ]);
-
-        return $this->render('grid', ['dataProvider' => $dataProvider, 'searchModel' => $searchModel]);
+        return $this->render('grid', [ 'dataProvider' => $dataProvider, 'searchModel' =>
+    $searchModel ]);
     }
 
     public function actionMultipleGrid() {
@@ -110,4 +111,57 @@ class ReservationsController extends Controller
             'roomsDataProvider' => $roomsDataProvider, 'roomsSearchModel' => $roomsSearchModel
         ]);
     }
+
+    public function actionDetailDependentDropdown() {
+        $showDetail = false;
+        $model = new Reservation();
+
+        if (isset($_POST['Reservation'])) {
+            $model->load(\Yii::$app->request->post());
+
+            if (isset($_POST['Reservation']['id']) && $_POST['Reservation']['id'] != null) {
+                $model = Reservation::findOne($_POST['Reservation']['id']);
+                $showDetail = true;
+            }
+        }
+
+        return $this->render('detailDependentDropdown', ['model' => $model, 'showDetail' => $showDetail]);
+    }
+
+    public function actionAjaxDropDownListByCustomerId($customer_id) {
+        $output = '';
+        $items = Reservation::findAll(['customer_id' => $customer_id]);
+
+        foreach ($items as $item) {
+            $content = sprintf('Reservation #%s at %s', $item->id, date('Y-m-d H:i:s', strtotime($item->reservation_date)));
+            $output .= \yii\helpers\Html::tag('option', $content, ['value' => $item->id]);
+        }
+
+        return $output;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
