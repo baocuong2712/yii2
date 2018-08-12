@@ -4,12 +4,12 @@
     'contentOptions' => ['style' => 'width:px;'],
     'buttons' => [
         'view' => function ($url, $model, $key) {
-            return Html::a('<span class="btn btn-info btn-xs">View</span>', $url, [
+            return Html::a('<span style="margin-right: 10px" class="btn btn-info btn-xs">View</span>', $url, [
                 'title' => Yii::t('yii', 'View'),
             ]);
         },
         'update' => function($url, $model, $key) {
-            return Html::a('<span class="btn btn-success btn-xs">Update</span>', $url, [
+            return Html::a('<span style="margin-right: 10px" class="btn btn-success btn-xs">Update</span>', $url, [
                 'title' => Yii::t('yii', 'Update')
             ]);
         },
