@@ -1,0 +1,1 @@
+<?= $form->field($model, 'floor')->textInput(['value' => isset($_POST['Room[floor]']) ? $_POST['Room[floor]'] : '123']) ?>
