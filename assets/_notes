@@ -1,0 +1,8 @@
+if ($model->load(Yii::$app->request->post()) && $model->login()) {
+    $user_id = Yii::$app->user->id;
+    if (User::find()->where(['id' => $user_id])->andwhere(['role' => 3])) {
+        return $this->redirect(['rooms/index']);
+    } else {
+        return $this->redirect(['index']);
+    }
+}
