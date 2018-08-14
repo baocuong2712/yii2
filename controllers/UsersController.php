@@ -2,17 +2,18 @@
 
 namespace app\controllers;
 
+use app\models\ResetPasswordForm;
 use Yii;
-use app\models\Room;
-use app\models\RoomSearch;
+use app\models\User;
+use app\models\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * RoomsController implements the CRUD actions for Room model.
+ * UsersController implements the CRUD actions for User model.
  */
-class RoomsController extends Controller
+class UsersController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -30,12 +31,12 @@ class RoomsController extends Controller
     }
 
     /**
-     * Lists all Room models.
+     * Lists all User models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new RoomSearch();
+        $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +46,7 @@ class RoomsController extends Controller
     }
 
     /**
-     * Displays a single Room model.
+     * Displays a single User model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,16 +59,16 @@ class RoomsController extends Controller
     }
 
     /**
-     * Creates a new Room model.
+     * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Room();
+        $model = new User();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['create']);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
@@ -76,7 +77,7 @@ class RoomsController extends Controller
     }
 
     /**
-     * Updates an existing Room model.
+     * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -93,14 +94,14 @@ class RoomsController extends Controller
         return $this->render('update', [
             'model' => $model,
         ]);
-    }/** @noinspection PhpUndefinedClassInspection */
+    }
 
     /**
-     * Deletes an existing Room model.
+     * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
@@ -112,18 +113,34 @@ class RoomsController extends Controller
     }
 
     /**
-     * Finds the Room model based on its primary key value.
+     * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Room the loaded model
+     * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Room::findOne($id)) !== null) {
+        if (($model = User::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionResetPassword() {
+        $model = new ResetPasswordForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $user = $this->findModel(Yii::$app->user->id);
+
+            // Here, we run our validation rules on the model
+            if ($model->validate()) {
+                $user->setPassword($model->password);
+                $user->save();
+                return $this->redirect('index');
+            }
+        }
+        return $this->render('update', ['model' => $model]);
     }
 }

@@ -26,11 +26,8 @@ class LoginForm extends Model
     public function rules()
     {
         return [
-            // username and password are both required
             [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
     }
@@ -78,13 +75,4 @@ class LoginForm extends Model
 
         return $this->_user;
     }
-
-/*      public $username;
-      public $password;
-
-      public function rule() {
-          return [
-
-          ];
-      }*/
 }

@@ -8,9 +8,21 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
+//use app\assets\AppAsset;
 
-AppAsset::register($this);
+//$this->registerJs(
+//    <<< EOT
+//$(function() {
+//   $(document).on('click', '.lang', function() {
+//       var lang = $(this).attr('id');
+//       $.post('site/language', {'lang': lang}, function() {
+//           location.reload();
+//       })
+//   });
+//});
+//EOT
+//);
+//AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -35,26 +47,49 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+
+    // NavBar content.
+    $menuItems = [
+        ['label' => 'Home', 'url' => ['/site/index']],
+    ];
+    if (Yii::$app->user->isGuest) {
+        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
+        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    } else {
+        $menuItems[] = '<li>'
+            . Html::beginForm(['/site/logout'], 'post')
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'btn btn-link logout', 'style' => 'padding-top: 14px']
+            )
+            . Html::endForm()
+            . '</li>';
+        $menuItems[] = ['label' => 'User', 'url' => ['/users/index']];
+    }
+
+    $count = 1;
+    foreach (Yii::$app->params['languages'] as $key => $language) {
+        $items[] = [
+            'label' => $language,
+            'url' => '',
+            'options' => ['id' => $key, 'class' => 'lang']
+        ];
+        if ($count == 1) {
+            $items[] = '<li class="divider"></li>';
+            $count--;
+        }
+    }
+
+    $menuItems[] = [
+        'label' => 'Language',
+        'items' => $items
+    ];
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/my-authentication/login-with-form']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/my-authentication/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
+        'items' => $menuItems,
     ]);
+
     NavBar::end();
     ?>
 

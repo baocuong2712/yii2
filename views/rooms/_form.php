@@ -1,15 +1,37 @@
 <?php
-use yii\widgets\ActiveForm;
+
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+/* @var $this yii\web\View */
+/* @var $model app\models\Room */
+/* @var $form yii\widgets\ActiveForm */
 ?>
-<?php $form = ActiveForm::begin(['id' => 'room-form']) ?>
-<?php echo $form->field($model, 'floor')->textInput(); ?>
-<?php echo $form->field($model, 'room_number')->textInput(); ?>
-<?php echo $form->field($model, 'has_conditioner')->checkbox(); ?>
-<?php echo $form->field($model, 'has_tv')->checkbox(); ?>
-<?php echo $form->field($model, 'has_phone')->checkbox(); ?>
-<?php echo $form->field($model, 'available_from')->textInput(); ?>
-<?php echo $form->field($model, 'price_per_day')->textInput(); ?>
-<?php echo $form->field($model, 'description')->textArea(); ?>
-<?php echo Html::submitButton('Create', ['class' => 'btn btn-primary']); ?>
-<?php ActiveForm::end() ?>
+
+<div class="room-form">
+
+    <?php $form = ActiveForm::begin(); ?>
+
+    <?= $form->field($model, 'floor')->textInput(['value' => isset($_POST['Room[floor]']) ? $_POST['Room[floor]'] : '123']) ?>
+
+    <?= $form->field($model, 'room_number')->textInput() ?>
+
+    <?= $form->field($model, 'has_conditioner')->textInput() ?>
+
+    <?= $form->field($model, 'has_tv')->textInput() ?>
+
+    <?= $form->field($model, 'has_phone')->textInput() ?>
+
+    <?= $form->field($model, 'available_from')->textInput() ?>
+
+    <?= $form->field($model, 'price_per_day')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+
+    <div class="form-group">
+        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
+
+</div>

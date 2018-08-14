@@ -1,28 +1,65 @@
-<br>
-<br>
-<table class="table">
-    <tr>
-        <td>Floor</td>
-        <td>Room number</td>
-        <td>Has conditioner</td>
-        <td>Has tv</td>
-        <td>Has phone</td>
-        <td>Available from</td>
-        <td>Available from (db format)</td>
-        <td>Price per day</td>
-        <td>Description</td>
-    </tr>
-<?php foreach ($rooms as $room){ ?>
-    <tr>
-        <td><?= $room['floor'] ?></td>
-        <td><?= $room['room_number'] ?></td>
-        <td><?= Yii::$app->formatter->asBoolean($room['has_conditioner']) ?></td>
-        <td><?= Yii::$app->formatter->asBoolean($room['has_tv']) ?></td>
-        <td><?= ($room['has_phone'] == 1) ? 'Yes' : 'No' ?></td>
-        <td><?= Yii::$app->formatter->asDate($room['available_from']) ?></td>
-        <td><?= Yii::$app->formatter->asDate($room['available_from'], 'php: Y-m-d') ?></td>
-        <td><?= Yii::$app->formatter->asCurrency($room['price_per_day'], 'EUR') ?></td>
-        <td><?= $room['description'] ?></td>
-    </tr>
-<?php } ?>
-</table>
+<?php
+
+use yii\helpers\Html;
+use yii\grid\GridView;
+
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\RoomSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Rooms';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="room-index">
+
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    <p>
+        <?= Html::a('Create Room', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'id',
+            'floor',
+            'room_number',
+            'has_conditioner',
+            'has_tv',
+            //'has_phone',
+            //'available_from',
+            //'price_per_day',
+            //'description:ntext',
+
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}{update}{delete}',
+                'contentOptions' => ['style' => 'width:190px;'],
+                'options' => [
+                    'class' => ''
+                ],
+                'buttons' => [
+                    'view' => function ($url, $model, $key) {
+                        return Html::a('<span style="margin-right: 10px" class="btn btn-info btn-xs">View</span>', $url, [
+                            'title' => Yii::t('yii', 'View'),
+                        ]);
+                    },
+                    'update' => function($url, $model, $key) {
+                        return Html::a('<span style="margin-right: 10px" class="btn btn-success btn-xs">Update</span>', $url, [
+                            'title' => Yii::t('yii', 'Update')
+                        ]);
+                    },
+                    'delete' => function($url, $model, $key) {
+                        return Html::a('<span class="btn btn-danger btn-xs">Delete</span>', $url, [
+                            'title' => Yii::t('yii', 'Delete')
+                        ]);
+                    }
+                ],
+            ]
+        ],
+    ]); ?>
+</div>

@@ -13,6 +13,19 @@ $config = [
         '@uploadedfilesdir' => '@app/uploadedfiles'
     ],
     'components' => [
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/messages',
+                    'sourceLanguage' => 'en-US',
+                    'fileMap' => [
+                        'app' => 'app.php',
+                        'app/error' => 'error.php',
+                    ],
+                ],
+            ],
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'tvH_IY15JQAeBF9gYY4ap-bRoslhCAm7',
@@ -47,27 +60,21 @@ $config = [
 
         'urlManager' => [
             'enablePrettyUrl' => true,
-            /*'showScriptName' => false,*/
-            'rules' => [
-                'site' => 'site/index',
-                'news/<year:\d{4}>/item-list' => 'news/item-list',
-//              'news/<category:\w+>/item-list' => 'news/item-list',
-                [
-                    'pattern' => 'news/<category:\w+>/item-list',
-                    'route' => 'news/item-list',
-                    'defaults' => ['category' => 'shopping']
-                ],
-                [
-                    'pattern' => '<lang:\w+>/news/international-index',
-                    'route' => 'news/international-index'
-                ]
-            ],
+            'showScriptName' => false,
+            'rules' => array(
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+            ),
 
         ],
         'authManager' => [
             'class' => 'yii\rbac\PhpManager',
         ],
     ],
+    /*'as beforeRequest' => [
+        'class' => 'app\components\CheckIfChangeLanguage'
+    ],*/
     'params' => $params,
 ];
 

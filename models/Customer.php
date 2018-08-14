@@ -11,6 +11,8 @@ use Yii;
  * @property string $name
  * @property string $surname
  * @property string $phone_number
+ *
+ * @property Reservation[] $reservations
  */
 class Customer extends \yii\db\ActiveRecord
 {
@@ -46,35 +48,11 @@ class Customer extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getReservations() {
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReservations()
+    {
         return $this->hasMany(Reservation::className(), ['customer_id' => 'id']);
     }
-
-    public function getRooms() {
-        return $this->hasMany(Room::className(), ['id' => 'room_id'])->via('reservations');
-    }
-
-    public function getReservationsCount() {
-        return $this->hasMany(Reservation::className(), ['customer_id' => 'id'])->count();
-    }
-
-    public function getNameAndSurname() {
-        return $this->name.' '.$this->surname;
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

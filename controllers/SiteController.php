@@ -2,16 +2,20 @@
 
 namespace app\controllers;
 
+use app\components\BaseController;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
+//use yii\web\Controller;
+use yii\web\Cookie;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\EntryForm;
+use app\models\SignupForm;
 
-class SiteController extends Controller
+class SiteController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -77,12 +81,34 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect(['customers/grid']); // folder/view
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->login();
+            if (User::find()->andwhere(['role' => 3])) {
+                return $this->redirect(['rooms/index']);
+            } else {
+                return $this->redirect(['index']);
+            }
         }
 
         $model->password = '';
         return $this->render('login', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionSignup() {
+        $model = new SignupForm();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
+            return $this->render('signup', ['model' => $model]);
+        }
+
+        $model->password = '';
+        return $this->render('signup', [
             'model' => $model,
         ]);
     }
@@ -96,7 +122,7 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->render('login');
     }
 
     /**
@@ -142,5 +168,25 @@ class SiteController extends Controller
 
         }
         return $this->render('entry', ['model' => $model]);
+    }
+
+    public function actionLanguage() {
+        if (isset($_POST['lang'])) {
+            Yii::$app->language = $_POST['lang'];
+            $cookie = new Cookie([
+                'name' => 'lang',
+                'value' => $_POST['lang']
+            ]);
+
+            Yii::$app->getResponse()->getCookies()->add($cookie);
+        }
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['id' => 'id']);
     }
 }
