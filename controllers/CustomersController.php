@@ -2,17 +2,19 @@
 
 namespace app\controllers;
 
+use app\components\BaseController;
 use Yii;
 use app\models\Customer;
 use app\models\CustomerSearch;
-use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * CustomersController implements the CRUD actions for Customer model.
  */
-class CustomersController extends Controller
+class CustomersController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -52,8 +54,12 @@ class CustomersController extends Controller
      */
     public function actionView($id)
     {
+        $model = Customer::findOne($id);
+        $countReservations = count($model->reservations);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'countCustomer' => $countReservations
         ]);
     }
 
@@ -61,18 +67,34 @@ class CustomersController extends Controller
      * Creates a new Customer model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws \Exception
      */
     public function actionCreate()
     {
-        $model = new Customer();
+        if (Yii::$app->user->can('create-customer')) {
+            $model = new Customer();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post())) {
+                $imageName = $model->name;
+                $model->file = UploadedFile::getInstance($model, 'file');
+
+                if ($model->file) {
+                    $model->file->saveAs('uploads/' . $imageName . '.' . $model->file->extension);
+                }
+                $model->file->saveAs('uploads/' . $imageName . '.' . $model->file->extension);
+                $model->image = 'uploads/' . $imageName . '.' . $model->file->extension;
+
+                $model->save(true);
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -84,31 +106,36 @@ class CustomersController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        if (Yii::$app->user->can('update-customer')) {
+            $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }/** @noinspection PhpUndefinedClassInspection */
+    }
 
     /**
      * Deletes an existing Customer model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return \yii\web\Response
+     * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        if (Yii::$app->user->can('delete-customer')) {
+            $this->findModel($id)->delete();
+            return $this->redirect(['index']);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to do that');
+        }
     }
 
     /**

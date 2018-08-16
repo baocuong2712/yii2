@@ -2,11 +2,10 @@
 
 namespace app\controllers;
 
+
 use app\components\BaseController;
-use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
-//use yii\web\Controller;
 use yii\web\Cookie;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -42,6 +41,7 @@ class SiteController extends BaseController
             ],
         ];
     }
+
 
     /**
      * {@inheritdoc}
@@ -81,12 +81,15 @@ class SiteController extends BaseController
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model->login();
-            if (User::find()->andwhere(['role' => 3])) {
+
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $user_id = Yii::$app->user->id;
+            if (Yii::$app->user->identity->role == 3){
+                return $this->redirect(['reservations/index']);
+            } else if (Yii::$app->user->identity->role == 2) {
                 return $this->redirect(['rooms/index']);
             } else {
-                return $this->redirect(['index']);
+                return $this->redirect(['users/index']);
             }
         }
 
@@ -109,7 +112,7 @@ class SiteController extends BaseController
 
         $model->password = '';
         return $this->render('signup', [
-            'model' => $model,
+            'model' => $model
         ]);
     }
 
@@ -122,7 +125,7 @@ class SiteController extends BaseController
     {
         Yii::$app->user->logout();
 
-        return $this->render('login');
+        return $this->redirect(['login']);
     }
 
     /**
@@ -170,23 +173,18 @@ class SiteController extends BaseController
         return $this->render('entry', ['model' => $model]);
     }
 
-    public function actionLanguage() {
+    public function actionLanguage()
+    {
         if (isset($_POST['lang'])) {
             Yii::$app->language = $_POST['lang'];
             $cookie = new Cookie([
                 'name' => 'lang',
                 'value' => $_POST['lang']
             ]);
-
             Yii::$app->getResponse()->getCookies()->add($cookie);
         }
-    }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCustomer()
-    {
-        return $this->hasOne(Customer::className(), ['id' => 'id']);
+//        $lang = Yii::$app->getRequest()->getCookies()->getValue('lang');
+//        return json_encode(['lang' => $lang]);
     }
 }

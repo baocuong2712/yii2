@@ -68,4 +68,11 @@ class Room extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Reservation::className(), ['room_id' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBlock() {
+        return $this->hasOne(Block::className(), ['id' => 'block_id']);
+    }
 }

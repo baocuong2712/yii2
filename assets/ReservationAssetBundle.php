@@ -2,17 +2,17 @@
 
 namespace app\assets;
 
-use yii\web\AssetBundle;
+use yii\web\YiiAsset;
 
-class SiteAssetBundle extends AssetBundle {
+class ReservationAssetBundle extends YiiAsset {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
 
     public $css = [
-        'css/site.css'
+
     ];
     public $js = [
-        'js/site.js'
+        'js/reservation.js'
     ];
 
     public $depends = [

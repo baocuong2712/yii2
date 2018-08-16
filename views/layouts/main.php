@@ -8,21 +8,13 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
-//use app\assets\AppAsset;
+use app\assets\SiteAssetBundle;
 
-//$this->registerJs(
-//    <<< EOT
-//$(function() {
-//   $(document).on('click', '.lang', function() {
-//       var lang = $(this).attr('id');
-//       $.post('site/language', {'lang': lang}, function() {
-//           location.reload();
-//       })
-//   });
-//});
-//EOT
-//);
-//AppAsset::register($this);
+SiteAssetBundle::register($this);
+
+// $baseUrl =  Yii::$app->homeUrl;
+// $languageUrl = $baseUrl . '/site/language';
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -39,7 +31,7 @@ use yii\widgets\Breadcrumbs;
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
+<?php
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
@@ -47,41 +39,52 @@ use yii\widgets\Breadcrumbs;
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-
-    // NavBar content.
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
+        ['label' => Yii::t('app', 'Home'), 'url' => ['/site/index']],
+        ['label' => Yii::t('app', 'Contact'), 'url' => ['/site/contact']],
+        ['label' => Yii::t('app', 'About'), 'url' => ['/site/about']],
     ];
+    if (Yii::$app->user->id == 2) {
+        $menuItems = [
+            ['label' => Yii::t('app', 'Home'), 'url' => ['/site/index']],
+            ['label' => Yii::t('app', 'Customers'), 'url' => ['/customers/index']],
+            ['label' => Yii::t('app', 'Reservations'), 'url' => ['/reservations/index']],
+            ['label' => Yii::t('app', 'Rooms'), 'url' => ['/rooms/index']],
+            ['label' => Yii::t('app', 'Roles'), 'url' => ['/auth-items/index']],
+            ['label' => Yii::t('app', 'Users'), 'url' => ['/users/index']],
+        ];
+    } else if (Yii::$app->user->id == 1) {
+        $menuItems = [
+            ['label' => Yii::t('app', 'Home'), 'url' => ['/site/index']],
+            ['label' => Yii::t('app', 'Customers'), 'url' => ['/customers/index']],
+            ['label' => Yii::t('app', 'Reservations'), 'url' => ['/reservations/index']],
+            ['label' => Yii::t('app', 'Rooms'), 'url' => ['/rooms/index']],
+            ['label' => Yii::t('app', 'Users'), 'url' => ['/users/index']],
+        ];
+    }
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $menuItems[] = ['label' => Yii::t('app', 'Signup'), 'url' => ['/site/signup']];
+        $menuItems[] = ['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']];
     } else {
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout', 'style' => 'padding-top: 14px']
+                Yii::t('app', 'Logout') . ' (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
             . '</li>';
-        $menuItems[] = ['label' => 'User', 'url' => ['/users/index']];
     }
 
-    $count = 1;
     foreach (Yii::$app->params['languages'] as $key => $language) {
         $items[] = [
-            'label' => $language,
-            'url' => '',
-            'options' => ['id' => $key, 'class' => 'lang']
+            'label' => $language, 'url' => '#',
+            'options' => ['id' => $key ,'class' => 'navbar-nav lang']
         ];
-        if ($count == 1) {
-            $items[] = '<li class="divider"></li>';
-            $count--;
-        }
     }
 
     $menuItems[] = [
-        'label' => 'Language',
+        'label' => Yii::t('app', 'Languages'),
         'items' => $items
     ];
 
@@ -91,7 +94,7 @@ use yii\widgets\Breadcrumbs;
     ]);
 
     NavBar::end();
-    ?>
+?>
 
     <div class="container">
         <?= Breadcrumbs::widget([
@@ -109,6 +112,10 @@ use yii\widgets\Breadcrumbs;
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
+
+<script>
+    var baseUrl = "<?= Yii::$app->homeUrl ?>";
+</script>
 
 <?php $this->endBody() ?>
 </body>

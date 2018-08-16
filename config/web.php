@@ -4,24 +4,31 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    'id' => 'basic',
+    'id' => 'yii2',
     'basePath' => dirname(__DIR__),
+
     'bootstrap' => ['log'],
+    'language' => 'en',
+    'sourceLanguage' => 'en',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
         '@uploadedfilesdir' => '@app/uploadedfiles'
     ],
     'components' => [
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'nullDisplay' => 'Who knows?',
+        ],
         'i18n' => [
             'translations' => [
                 'app*' => [
                     'class' => 'yii\i18n\PhpMessageSource',
                     'basePath' => '@app/messages',
-                    'sourceLanguage' => 'en-US',
+                    'sourceLanguage' => 'en',
                     'fileMap' => [
                         'app' => 'app.php',
-                        'app/error' => 'error.php',
+//                        'app/error' => 'error.php',
                     ],
                 ],
             ],
@@ -61,20 +68,25 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => array(
-                '<controller:\w+>/<id:\d+>' => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-            ),
-
+            'rules' => [
+                'site' => 'site/index',
+                'news/<year:\d{4}>/item-list' => 'news/item-list',
+//              'news/<category:\w+>/item-list' => 'news/item-list',
+                [
+                    'pattern' => 'news/<category:\w+>/item-list',
+                    'route' => 'news/item-list',
+                    'defaults' => ['category' => 'shopping']
+                ],
+                [
+                    'pattern' => '<lang:\w+>/news/international-index',
+                    'route' => 'news/international-index'
+                ]
+            ],
         ],
         'authManager' => [
-            'class' => 'yii\rbac\PhpManager',
+            'class' => 'yii\rbac\DbManager',
         ],
     ],
-    /*'as beforeRequest' => [
-        'class' => 'app\components\CheckIfChangeLanguage'
-    ],*/
     'params' => $params,
 ];
 

@@ -1,28 +1,24 @@
 <?php
-
 /* @var $this yii\web\View */
 
-use app\assets\SiteAssetBundle;
 
-SiteAssetBundle::register($this);
-
-$this->title = 'My Yii Application';
+$this->title = Yii::t('app', 'My Yii Application');
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1><?php echo Yii::t('app', 'Hello') ?>!</h1>
+        <h1><?= Yii::t('app', 'Congratulations') ?>!</h1>
 
         <p class="lead"><?= Yii::t('app', 'You have successfully created your Yii-powered application') ?>.</p>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com"><?= Yii::t('app', 'Get started with Yii') ?></a></p>
     </div>
 
     <div class="body-content">
 
         <div class="row">
             <div class="col-lg-4">
-                <h2>Heading</h2>
+                <h2><?php \app\components\StamfordBridge::widget(['message' => 'London']) ?></h2>
 
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
                     dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip

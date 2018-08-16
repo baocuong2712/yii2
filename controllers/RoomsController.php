@@ -2,18 +2,32 @@
 
 namespace app\controllers;
 
+use app\components\BaseController;
 use Yii;
 use app\models\Room;
 use app\models\RoomSearch;
-use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 
 /**
  * RoomsController implements the CRUD actions for Room model.
  */
-class RoomsController extends Controller
+class RoomsController extends BaseController
 {
+    public function beforeAction($action)
+    {
+        return [
+            'bootstrap' => [
+                [
+                    'class' => 'app\components\LanguageSelector',
+                    'supportedLanguages' => ['ru_RU'],
+                ],
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -35,6 +49,8 @@ class RoomsController extends Controller
      */
     public function actionIndex()
     {
+        Url::remember();
+
         $searchModel = new RoomSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -64,15 +80,19 @@ class RoomsController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Room();
+        if (Yii::$app->user->can('create_room')) {
+            $model = new Room();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['create']);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -84,31 +104,37 @@ class RoomsController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        if (Yii::$app->user->can('update_room')) {
+            $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+//                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->goBack(Url::previous());
+            }
+
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }/** @noinspection PhpUndefinedClassInspection */
+    }
 
     /**
      * Deletes an existing Room model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        if (Yii::$app->user->can('delete-room')) {
+            $this->findModel($id)->delete();
+            return $this->redirect(['index']);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
+        }
     }
 
     /**

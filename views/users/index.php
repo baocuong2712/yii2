@@ -25,29 +25,39 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             'username',
             'email:email',
+            [
+                'label' => 'Password',
+                'attribute' => 'password_hash',
+                'value' => function($model) {
+                    return Yii::$app->security->decryptByPassword(utf8_decode($model->password_hash), 'London');
+                },
+            ],
+            //'access_token',
 
             [
                 'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}{update}{delete}',
+//                'contentOptions' => ['style' => ':;'],
                 'buttons' => [
-                    'view' => function($url) {
-                        return Html::a("<span class='btn btn-info'>View</span>", $url, [
-                            'title' => Yii::t('yii', 'View')
+                    'view' => function ($url, $model, $key) {
+                        return Html::a('<span style="margin-right: 10px" class="btn btn-info btn-xs">View</span>', $url, [
+                            'title' => Yii::t('yii', 'View'),
                         ]);
                     },
-                    'update' => function($url) {
-                        return Html::a('<span class="btn btn-success">Reset password</span>', $url, [
-                            'title' => Yii::t('yii', 'Reset password')
+                    'update' => function($url, $model, $key) {
+                        return Html::a('<span style="margin-right: 10px" class="btn btn-success btn-xs">Reset password</span>', 'reset-password?id=' . $model->id, [
+                            'title' => Yii::t('yii', 'Update')
                         ]);
                     },
-                    'delete' => function($url) {
-                        return Html::a('<span class="btn btn-success">Delete acount</span>', $url, [
-                            'title' => Yii::t('yii', 'Delete acount')
+
+                    'delete' => function($url, $model, $key) {
+                        return Html::a('<span class="btn btn-danger btn-xs">Delete</span>', $url, [
+                            'title' => Yii::t('yii', 'Delete')
                         ]);
                     }
-                ]
+                ],
             ]
         ],
     ]); ?>

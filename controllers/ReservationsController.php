@@ -2,17 +2,22 @@
 
 namespace app\controllers;
 
+
+use app\components\BaseController;
 use Yii;
 use app\models\Reservation;
+use app\models\Block;
+use app\models\Room;
 use app\models\ReservationSearch;
-use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\widgets\ActiveForm;
 
 /**
  * ReservationsController implements the CRUD actions for Reservation model.
  */
-class ReservationsController extends Controller
+class ReservationsController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -61,18 +66,28 @@ class ReservationsController extends Controller
      * Creates a new Reservation model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
-        $model = new Reservation();
+        if (!(Yii::$app->user->can('create-reservation'))) {
+            $model = new Reservation();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if (Yii::$app->request->isAjax && $model->load($_POST)) {
+                Yii::$app->response->format= 'json';
+                return ActiveForm::validate($model);
+            }
+
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -80,35 +95,44 @@ class ReservationsController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        if (Yii::$app->user->can('update-reservation')) {
+            $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }/** @noinspection PhpUndefinedClassInspection */
+    }
 
     /**
      * Deletes an existing Reservation model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException if the model cannot be found
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        if (Yii::$app->user->can('delete-reservation')) {
+            $this->findModel($id)->delete();
+            return $this->redirect(['index']);
+        } else {
+            throw new ForbiddenHttpException('You are not allowed to access this page');
+        }
     }
 
     /**
@@ -126,4 +150,21 @@ class ReservationsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionGetPricePerDay($room_id) {
+        $pricePerDay = Room::findOne($room_id)->price_per_day;
+        echo $pricePerDay;
+    }
+
+    public function actionGetBlockByRoom($room_id) {
+        $block = Room::find()->where(['id' => $room_id])->with('block')->one()->block;
+        $array = array($block->block_name, $block->id);
+        echo json_encode($array);
+    }
+
+    public function actionGetHotelByBlock($block_id) {
+        $hotel = Block::find()->where(['id' => $block_id])->with('hotel')->one()->hotel;
+        echo $hotel->name;
+    }
+    
 }

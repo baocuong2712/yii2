@@ -27,6 +27,7 @@ $config = [
         'db' => $db,
     ],
     'params' => $params,
+    'language' => 'ru_RU',
     /*
     'controllerMap' => [
         'fixture' => [ // Fixture generation command line.

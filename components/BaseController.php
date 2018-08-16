@@ -1,17 +1,16 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: New York
- * Date: 10/8/2018
- * Time: 0:24 AM
+ * User: Cuong
+ * Date: 8/9/2018
+ * Time: 5:13 PM
  */
 
 namespace app\components;
 
+use yii\web\Cookie;
 
-use yii\web\Controller;
-
-class BaseController extends Controller
+class BaseController extends \yii\web\Controller
 {
     public function beforeAction($action)
     {

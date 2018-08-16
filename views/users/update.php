@@ -3,11 +3,12 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\ResetPasswordForm */
+/* @var $model app\models\User */
 
-$this->title = 'Update User: ' . Yii::$app->user->id;
+$this->title = 'Update User: ' . $user->id ;
+
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => Yii::$app->user->id, 'url' => ['view', 'id' => Yii::$app->user->id]];
+$this->params['breadcrumbs'][] = ['label' => $user->id, 'url' => ['view', 'id' => $user->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="user-update">

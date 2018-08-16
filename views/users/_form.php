@@ -12,14 +12,14 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'password')->label('Password')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'newPassword')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'newPassword')->label('New Password')->passwordInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'reenterPassword')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'reenterPassword')->label('Confirm New Password')->passwordInput(['maxlength' => true]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Reset Password', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

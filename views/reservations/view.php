@@ -28,9 +28,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'room_id',
-            'customer_id',
+            [
+                'label' => 'Room number',
+                'attribute' => 'room_id',
+                'value' => $model->room->room_number
+            ],
+            [
+                'label' => 'Customer name',
+                'attribute' => 'customer_id',
+                'value' => $model->customer->name
+            ],
             'price_per_day',
             'date_from',
             'date_to',
