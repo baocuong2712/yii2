@@ -66,7 +66,13 @@ class SiteController extends BaseController
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $imageSource = 'holdback-350x150.jpg';
+        $imageName = 'Hidden';
+        if (isset($_POST['imageName']) && isset($_FILES['imageSource']) && isset($_FILES['imageSource']['name'])) {
+            $imageName = $_POST['imageName'];
+            $imageSource = $_FILES['imageSource']['name'];
+        }
+        return $this->render('index', ['imageName' => $imageName, 'imageSource' => $imageSource]);
     }
 
     /**
@@ -186,5 +192,14 @@ class SiteController extends BaseController
 
 //        $lang = Yii::$app->getRequest()->getCookies()->getValue('lang');
 //        return json_encode(['lang' => $lang]);
+    }
+
+    public function actionGetEditedImage()
+    {
+        if (isset($_POST['imageName']) && isset($_POST['imageSource'])) {
+            $imageName = $_POST['imageName'];
+            $imageSource = $_POST['imageSource'];
+            return $this->render('index', ['imageName' => $imageName, 'imageSource' => $imageSource]);
+        }
     }
 }
