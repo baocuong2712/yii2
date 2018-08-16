@@ -5,6 +5,5 @@ $(function() {
        $.post( 'index.php/site/language', {'lang': lang}, function () {
             location.reload();
         });
-
     });
 });
