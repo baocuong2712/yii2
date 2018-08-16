@@ -10,6 +10,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\User;
 
 class SignupForm extends Model
 {
@@ -35,16 +36,19 @@ class SignupForm extends Model
         ];
     }
 
+    /**
+     * @return User|null
+     */
     public function signup() {
-        //validate() is a base function.
         if (!$this->validate()) {
             return null;
         }
 
-        $user = new \yii\web\User();
+        $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);
+        $user->role = 3;
         $user->generateAuthKey();
 
         return $user->save() ? $user : null;

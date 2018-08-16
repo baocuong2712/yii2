@@ -1,14 +1,15 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: New York
- * Date: 13/8/2018
- * Time: 20:08 PM
+ * User: Cuong
+ * Date: 08/13/2018
+ * Time: 4:09 PM
  */
 
 namespace app\models;
 
 use yii\base\Model;
+use app\models\User;
 
 class ResetPasswordForm extends Model
 {
@@ -16,36 +17,27 @@ class ResetPasswordForm extends Model
     public $newPassword;
     public $reenterPassword;
 
-    private $_user = false;
+    public $_user;
 
-    public function rules() {
+    public function rules()
+    {
         return [
-            ['password', 'required'],
-            ['newPassword', 'required'],
-            ['reenterPassword', 'required'],
-            ['reenterPassword',
-                'compare',
-                'compareAttribute' => 'newPassword',
-                'message' => "Passwords don't match"
-            ]
+            [ 'password', 'validatePassword' ],
+            [ 'newPassword', 'required' ],
+            [ 'reenterPassword', 'required' ],
+            [ 'reenterPassword', 'compare', 'compareAttribute' => 'newPassword', 'message' => "Passwords do not match" ]
         ];
     }
 
     public function attributeLabels()
     {
         return [
-            //'user_profile_id' => 'User Profile ID',
-            //'user_ref_id' => 'User Ref ID',
             'password' => 'Password',
             'newPassword' => 'Change Password',
             'reenterPassword' => 'Re-enter Password',
         ];
     }
 
-    /**
-     * @param $attribute
-     * @param $params
-     */
     public function validatePassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
@@ -56,13 +48,10 @@ class ResetPasswordForm extends Model
         }
     }
 
-    /**
-     * @return User|mixed|null
-     */
     protected function getUser()
     {
         if ($this->_user === null) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = User::findIdentity(\Yii::$app->user->id);
         }
 
         return $this->_user;

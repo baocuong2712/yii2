@@ -1,8 +1,9 @@
-<?php
+<?php /** @noinspection ALL */
 
 namespace app\models;
 
 use Yii;
+use yii\web\Session;
 
 /**
  * This is the model class for table "reservation".
@@ -20,6 +21,9 @@ use Yii;
  */
 class Reservation extends \yii\db\ActiveRecord
 {
+    public $block;
+    public $hotel;
+
     /**
      * {@inheritdoc}
      */
@@ -37,7 +41,27 @@ class Reservation extends \yii\db\ActiveRecord
             [['room_id', 'customer_id', 'price_per_day', 'date_from', 'date_to'], 'required'],
             [['room_id', 'customer_id'], 'integer'],
             [['price_per_day'], 'number'],
-            [['date_from', 'date_to', 'reservation_date'], 'safe'],
+            [['reservation_date'], 'safe'],
+            [['date_from'],  function($attribute, $params) {
+                $today = date('y-m-d');
+                $seletedDay = date($this->$attribute);
+
+                if (strtotime($seletedDay) < strtotime($today)) {
+                    $this->addError($attribute, 'Bạn đã nhập ngày cũ, vui lòng chọn lại!');
+                }
+                Yii::$app->getSession()->setFlash('date_from', $seletedDay);
+            }],
+            [['date_to'], function($attribute, $params) {
+                $today = strtotime(date('y-m-d'));
+                $seletedDay = strtotime(date($this->$attribute));
+                $dateFrom = strtotime(Yii::$app->session->getFlash('date_from'));
+
+                if ($seletedDay < $today) {
+                    $this->addError($attribute, 'Bạn đã nhập ngày cũ so với hiện tại, vui lòng chọn lại!');
+                } else if ($seletedDay < $dateFrom) {
+                    $this->addError($attribute, 'Date To không được nhỏ hơn Date From!');
+                } else {}
+            }],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::className(), 'targetAttribute' => ['room_id' => 'id']],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customer_id' => 'id']],
         ];
@@ -50,9 +74,11 @@ class Reservation extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'room_id' => 'Room ID',
-            'customer_id' => 'Customer ID',
+            'room_id' => 'Room number',
+            'customer_id' => 'Customer Name',
             'price_per_day' => 'Price Per Day',
+            'block' => 'Block',
+            'hotel' => 'Hotel',
             'date_from' => 'Date From',
             'date_to' => 'Date To',
             'reservation_date' => 'Reservation Date',

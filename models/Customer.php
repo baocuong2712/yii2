@@ -16,6 +16,8 @@ use Yii;
  */
 class Customer extends \yii\db\ActiveRecord
 {
+    public $file;
+
     /**
      * {@inheritdoc}
      */
@@ -32,6 +34,7 @@ class Customer extends \yii\db\ActiveRecord
         return [
             [['name', 'surname'], 'required'],
             [['name', 'surname', 'phone_number'], 'string', 'max' => 50],
+            ['file', 'file']
         ];
     }
 
@@ -45,6 +48,7 @@ class Customer extends \yii\db\ActiveRecord
             'name' => 'Name',
             'surname' => 'Surname',
             'phone_number' => 'Phone Number',
+            'file' => 'Image'
         ];
     }
 

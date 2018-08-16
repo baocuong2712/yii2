@@ -1,16 +1,29 @@
 <?php
+
 namespace app\models;
+
 use Yii;
 use yii\db\ActiveRecord;
+
 class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
     /**
-     * {@inheritdoc}
+     * @return array
      */
+
+
+    public function rules()
+    {
+        return [
+
+        ];
+    }
+
     public static function tableName()
     {
         return 'user';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -18,6 +31,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return static::findOne(['id' => $id]);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -25,6 +39,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return static::findOne(['access_token' => $token]);
     }
+
     /**
      * Finds user by username
      *
@@ -35,6 +50,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return static::findOne(['username' => $username]);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -43,7 +59,6 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return $this->getPrimaryKey();
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -51,6 +66,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return $this->auth_key;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -58,6 +74,9 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return $this->auth_key === $authKey;
     }
+
+    public $secretKey = 'London';
+
     /**
      * Validates password
      *
@@ -66,14 +85,23 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function validatePassword($password)
     {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
+        $decryptedPassword = Yii::$app->security->decryptByPassword(utf8_decode($this->password_hash), $this->secretKey);
+        return $decryptedPassword === $password;
     }
+
     public function setPassword($password) {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash = utf8_encode(Yii::$app->security->encryptByPassword($password, $this->secretKey));
     }
+
+    public function getPassword()
+    {
+        return Yii::$app->getSecurity()->decryptByPassword(utf8_decode($this->password_hash), $this->secretKey);
+    }
+
     public function generateAuthKey() {
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -83,5 +111,13 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['id' => 'user_id']);
     }
 }

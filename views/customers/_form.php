@@ -10,11 +10,13 @@ use yii\widgets\ActiveForm;
 
 <div class="customer-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'surname')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'file')->fileInput() ?>
 
     <?= $form->field($model, 'phone_number')->textInput(['maxlength' => true]) ?>
 

@@ -1,46 +1,45 @@
 <?php
-
 /* @var $this yii\web\View */
 
-use app\assets\SiteAssetBundle;
+use app\components\StamfordBridge;
+use yii\helpers\Html;
 
-SiteAssetBundle::register($this);
-
-$this->title = 'My Yii Application';
+$this->title = Yii::t('app', 'My Yii Application');
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1><?php echo Yii::t('app', 'Hello') ?>!</h1>
+        <h1><?= Yii::t('app', 'Congratulations') ?>!</h1>
 
         <p class="lead"><?= Yii::t('app', 'You have successfully created your Yii-powered application') ?>.</p>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com"><?= Yii::t('app', 'Get started with Yii') ?></a></p>
     </div>
 
     <div class="body-content">
 
         <div class="row">
             <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+                <?= Html::beginForm("", 'post', ['enctype' => 'multipart/form-data', 'style' => 'margin-top: 20px']) ?>
+                    <div class="form-group">
+                        <?= Html::label('Image name', 'imageName') ?>
+                        <?= Html::textInput('imageName', '', ['class' => 'form-control']) ?>
+                    </div>
+                    <div class="form-group">
+                        <?= Html::label('Image source', 'imageSource') ?>
+                        <?= Html::fileInput('imageSource', '', ['class' => 'form-control']) ?>
+                    </div>
+                    <div class="form-group">
+                        <?= Html::label('Image size', 'imageSize') ?>
+                        <?= Html::textInput('imageSize', '', ['class' => 'form-control']) ?>
+                    </div>
+                <?= Html::submitButton('Submit', ['class' => 'submit']) ?>
+                <?= Html::endForm() ?>
             </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+            <?php $fakedModel = (object)['name'=> 'London', 'image' => 'uploads/' . $imageSource]; ?>
+            <?= StamfordBridge::widget(['model' => $fakedModel]) ?>
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
             <div class="col-lg-4">
                 <h2>Heading</h2>
 

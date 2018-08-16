@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'floor')->textInput(['value' => isset($_POST['Room[floor]']) ? $_POST['Room[floor]'] : '123']) ?>
+    <?= $form->field($model, 'floor')->textInput() ?>
 
     <?= $form->field($model, 'room_number')->textInput() ?>
 

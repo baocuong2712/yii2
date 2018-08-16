@@ -42,9 +42,13 @@ class UserSearch extends User
     public function search($params)
     {
         $query = User::find();
+        if (Yii::$app->user->identity->role == 2) {
+            $query->where(['role' => 2])->one();
+        } else if (Yii::$app->user->identity->role == 1) {
+            $query->where(['!=', 'role', 1]);
+        }
 
         // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

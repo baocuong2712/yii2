@@ -22,10 +22,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             'floor',
             'room_number',
             'has_conditioner',
@@ -38,10 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{view}{update}{delete}',
-                'contentOptions' => ['style' => 'width:190px;'],
-                'options' => [
-                    'class' => ''
-                ],
+                'contentOptions' => ['style' => 'width:220px;'],
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         return Html::a('<span style="margin-right: 10px" class="btn btn-info btn-xs">View</span>', $url, [

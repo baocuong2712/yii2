@@ -32,7 +32,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'surname',
             'phone_number',
-        ],
+            [
+                'attribute' => 'Reservations',
+                'format' => 'raw',
+                'value' => function($model) {
+                    $title = sprintf('Reservation (%s)', count($model->reservations));
+                    // Loc cac reservation co customer_id duoc click.
+                    return Html::a($title, ['reservations/index', 'Reservation[customer_id]' => $model->id]);
+                }
+            ],
+            [
+                'attribute' => 'photo',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return Html::img('@web/' . $model->image, ['alt'=>'some', 'class'=>'', 'height'=>'100px', 'width'=>'100px']);
+                }
+            ]
+        ],  
     ]) ?>
 
 </div>

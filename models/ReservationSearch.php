@@ -18,16 +18,15 @@ class ReservationSearch extends Reservation
     public function rules()
     {
         return [
-            [['id', 'customer_id'], 'integer'],
+            [['id'], 'integer'],
             [['price_per_day'], 'number'],
-            [['date_from', 'date_to', 'reservation_date', 'room.room_number'], 'safe'],
+            [['date_from', 'date_to', 'reservation_date', 'room.floor', 'customer.name'], 'safe'],
         ];
     }
 
     public function attributes()
     {
-        // add related fields to searchable attributes
-        return array_merge(parent::attributes(), ['room.room_number']);
+        return array_merge(parent::attributes(), ['room.floor', 'customer.name']);
     }
 
     /**
@@ -49,20 +48,23 @@ class ReservationSearch extends Reservation
     public function search($params)
     {
         $query = Reservation::find();
+        $query->joinWith('room')->joinWith('customer');
 
         // add conditions that should always apply here
-        // Join with relation `room` that is a relation to the table `rooms` and set the table alias to be `room`
-        $query->joinWith(['room']);
-        // Since version 2.0.7, the above line can be simplified to $query->joinWith('author AS author');
+        if (isset($_GET['Reservation']['customer_id'])) {
+            $query->where(["=", 'customer_id', $_GET['Reservation']['customer_id']]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        // Enable sorting for the related column
-        $dataProvider->sort->attributes['room.room_number'] = [
-            'asc' => ['room.room_number' => SORT_ASC],
-            'desc' => ['room.room_number' => SORT_ASC]
+        $dataProvider->sort->attributes['room.floor'] = [
+            'asc' => ['room.floor' => SORT_ASC],
+            'des' => ['room.floor' => SORT_DESC]
+        ];
+        $dataProvider->sort->attributes['customer.name'] = [
+            'asc' => ['customer.name' => SORT_ASC],
+            'des' => ['customer.name' => SORT_DESC]
         ];
 
         $this->load($params);
@@ -82,8 +84,8 @@ class ReservationSearch extends Reservation
             'date_from' => $this->date_from,
             'date_to' => $this->date_to,
             'reservation_date' => $this->reservation_date,
-        ])->andFilterWhere(['LIKE', 'room.room_number', $this->getAttribute('room.room_number')]);
-
+        ])->andFilterWhere(['like', 'room.floor', $this->getAttribute('room.floor')
+        ])->andFilterWhere(['LIKE', 'customer.name', $this->getAttribute('customer.name')]);
 
         return $dataProvider;
     }

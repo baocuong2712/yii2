@@ -1,12 +1,22 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: New York
- * Date: 9/8/2018
- * Time: 23:56 PM
- */
 
 return [
-    'Hello' => 'Xin chào',
-    'You have successfully created your Yii-powered application' => 'Bạn đã tạo thành công ứng dụng Yii'
+    'My Yii Application' => 'Ứng dụng của tôi',
+    'Congratulations' => 'Chúc mừng',
+    'Home' => 'Trang chủ',
+    'Contact' => 'Liên hệ',
+    'About' => 'Chúng tôi',
+    'Signup' => 'Đăng ký',
+    'Login' => 'Đăng nhập',
+    'Languages' => 'Ngôn ngữ',
+    'You have successfully created your Yii-powered application' => 'Bạn đã tạo cho mình thành công 1 ứng dụng Yii mạnh mẽ',
+    'Get started with Yii' => 'Bắt đầu với Yii',
+    'Customers' => 'Khách hàng',
+    'Reservations' => 'Đặt phòng',
+    'Roles' => 'Vai trò',
+    'Rooms' => 'Phòng',
+    'Users' => 'Người dùng',
+    'Logout' => 'Đăng xuất'
 ];
+
+
