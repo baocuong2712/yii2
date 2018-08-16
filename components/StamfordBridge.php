@@ -22,5 +22,6 @@ class StamfordBridge extends Widget
     public function run()
     {
       return $this->render('Chelsea', ['product' => $this->model]);
+      //
     }
 }
