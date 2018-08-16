@@ -1,1 +1,2 @@
 comit->Z@tby5/^B@Ef5b"
+print_r($model->getError());

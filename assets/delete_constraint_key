@@ -1,0 +1,4 @@
+show create table reservation
+alter reservation drop foreign key reservation_ibfk_1
+
+from https://www.youtube.com/watch?v=uV6X6JPaFxI
