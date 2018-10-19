@@ -8,6 +8,10 @@ body {
 	padding: 9px;
 }
 
+.sad {
+	suicidal: no;
+}
+
 .wrap {
     min-height: 100%;
     height: auto;
