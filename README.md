@@ -19,6 +19,7 @@ features to your application.
 
 DIRECTORY STRUCTURE
 -------------------
+gfdrdf
 
       assets/             contains assets definition
       commands/           contains console commands (controllers)
